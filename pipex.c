@@ -6,7 +6,7 @@
 /*   By: pabalons <pabalons@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 12:00:30 by pabalons          #+#    #+#             */
-/*   Updated: 2025/01/22 18:24:23 by pabalons         ###   ########.fr       */
+/*   Updated: 2025/01/22 21:49:09 by pabalons         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int main(int ar, char **av, char **env)
     close_fd(pipe[1], pipe2[1]);
 
     // Espera a los procesos hijos
-    pip_wait_children(process_count);
+    wait_children(process_count);
 
     // Escribe el resultado final
     pip_write_result(ar, av, pipe, pipe2);

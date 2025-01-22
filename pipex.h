@@ -6,7 +6,7 @@
 /*   By: pabalons <pabalons@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 11:59:33 by pabalons          #+#    #+#             */
-/*   Updated: 2025/01/22 18:52:26 by pabalons         ###   ########.fr       */
+/*   Updated: 2025/01/22 22:14:57 by pabalons         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,7 @@ char	*get_next_line(int fd);
 void new_process(char *cmd, int pipe_input[2], int pipe_output[2], char **env, int is_first_process);
 void prepare_child(int pipe_input[2], int pipe_output[2], int is_first_process);
 void execute_command(char *cmd, char **env);
+void wait_children(int procress_count);
+void pip_write_result(int ac, char *av[], int pipe1[2], int pipe2[2]);
+void free_split(char **split_arr);
 #endif
