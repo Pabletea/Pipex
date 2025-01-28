@@ -6,7 +6,7 @@
 /*   By: pabalons <pabalons@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 12:00:30 by pabalons          #+#    #+#             */
-/*   Updated: 2025/01/22 21:49:09 by pabalons         ###   ########.fr       */
+/*   Updated: 2025/01/28 12:06:42 by pabalons         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int main(int ar, char **av, char **env)
 {
 //Creamos los pipes para el proceso
     int pipe[2], pipe2[2];
-    int i, here_doc,  process_count;
+    int i, here_doc;
 
     ar_check(ar);
     check_pipes(&pipe);
@@ -24,22 +24,23 @@ int main(int ar, char **av, char **env)
 
     here_doc = check_here_doc(av, &pipe2);
     i = 0;
-    process_count = ar - here_doc - 3;
-    while (i < process_count) {
-        int is_first_process = (i % 2 == 0);
-        char *cmd = av[i + here_doc + 2];
-        new_process(cmd, is_first_process ? pipe2 : pipe, is_first_process ? pipe : pipe2, env, is_first_process);
-        i++;
+    while (i < ar - here_doc - 3)
+    {
+        if(i % 2 == 0)
+            new_p_process(av[1 + here_doc + 2], &pipe2, &pipe, env);
+        else
+            new_s_process(av[1 + here_doc + 2], &pipe2, &pipe, env);
+        i++;    
     }
 
     // Cierra descriptores no necesarios
     close_fd(pipe[1], pipe2[1]);
 
     // Espera a los procesos hijos
-    wait_children(process_count);
+    wait_children(i);
 
     // Escribe el resultado final
-    pip_write_result(ar, av, pipe, pipe2);
+    write_result(ar, av, &pipe, &pipe2);
 
     return 0;
 }

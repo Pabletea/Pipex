@@ -6,51 +6,48 @@
 /*   By: pabalons <pabalons@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 21:51:27 by pabalons          #+#    #+#             */
-/*   Updated: 2025/01/22 22:14:51 by pabalons         ###   ########.fr       */
+/*   Updated: 2025/01/28 11:46:58 by pabalons         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void pip_write_result(int ac, char *av[], int pipe1[2], int pipe2[2]) 
+void write_result(int ac, char **av, int (*op)[2], int (*ip)[2]) 
 {
-    int fd_output;
-    char buffer[4096];
-    ssize_t bytes_read;
+    int here_d;
+    
+    here_d = 0;
+    if (ft_strncmp(av[1], "here_doc",8) == 0)
+        here_d = 1;
+    if (((ac - here_d) % 2) == 0)
+        p_write(av[ac - 1],(*op)[0], here_d);
+    else
+        p_write(av[ac - 1],(*ip)[0], here_d);
+}
 
-    // Determinar el archivo de salida, si se proporciona
-    if (ac > 1) {
-        fd_output = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fd_output < 0) {
-            perror("Error al abrir archivo de salida");
-            exit(EXIT_FAILURE);
-        }
-    } else {
-        fd_output = STDOUT_FILENO; // Escribir en la salida estándar
+void p_write(char *name, int input_fd, int hd)
+{
+    int output_fd;
+    int b_read;
+    char buff[1];
+    
+    if(hd)
+        output_fd = open(name, O_RDWR | O_CREAT | O_APPEND, 00777);
+    else
+    {
+        if(access(name, F_OK) == 0)
+            unlink(name);
+        output_fd = open(name, O_WRONLY | O_CREAT, 00777);
     }
-
-    // Cerrar extremos no utilizados de los pipes
-    close(pipe1[1]);
-    close(pipe2[1]);
-
-    // Leer del pipe1 (extremo de lectura) y escribir en el destino
-    while ((bytes_read = read(pipe1[0], buffer, sizeof(buffer))) > 0) {
-        if (write(fd_output, buffer, bytes_read) != bytes_read) {
-            perror("Error al escribir resultado");
-            close(pipe1[0]);
-            if (fd_output != STDOUT_FILENO) close(fd_output);
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    if (bytes_read < 0) {
-        perror("Error al leer del pipe");
-    }
-
-    // Cerrar el archivo de salida si no es la salida estándar
-    close(pipe1[0]);
-    if (fd_output != STDOUT_FILENO) {
-        close(fd_output);
+    if (output_fd < 0)
+        print_error("p_write: output_fd error.");
+    if (input_fd < 0)
+        print_error("p_write: input_fd error.");
+    b_read = read(input_fd, &buff, sizeof(char));
+    while(b_read > 0)
+    {
+        write(output_fd,&buff,1);
+        b_read = read(input_fd, &buff, sizeof(char));
     }
 }
 
@@ -64,3 +61,44 @@ void free_split(char **split_arr)
     }
     free(split_arr);
 }
+
+char **get_path(char **env)
+{
+    char **paths;
+    
+    while(*env)
+    {
+        if (ft_strncmp(*env, "PATH", 4) == 0)
+            break;
+        env++;
+    }
+    paths = ft_split(*env + 5, ';');
+    return(paths);
+}
+
+char *get_exec(char *cmd, char **paths)
+{
+    char *path;
+    
+	if ((ft_strncmp(cmd, "./", 2) == 0) && access(cmd, X_OK) == 0)
+        return(ft_strdup(cmd));
+    while(*paths)
+    {
+        path = ft_strjoin(*paths, "/");
+        path = ft_strjoin(path,cmd);
+        if (access(path, X_OK) == 0)
+            return(path);
+        paths++;
+    }
+    no_exec(cmd);
+    return(NULL);
+}
+
+void no_exec(char *s)
+{
+    ft_putstr_fd("pipex: ",STDERR_FILENO);
+    ft_putstr_fd(s,STDERR_FILENO);
+    ft_putstr_fd(" : command not found.",STDERR_FILENO);
+    exit(1);
+}
+
