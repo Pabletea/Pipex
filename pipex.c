@@ -6,7 +6,7 @@
 /*   By: pabalons <pabalons@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 12:00:30 by pabalons          #+#    #+#             */
-/*   Updated: 2025/01/28 12:06:42 by pabalons         ###   ########.fr       */
+/*   Updated: 2025/01/28 16:45:39 by pabalons         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,32 +15,25 @@
 int main(int ar, char **av, char **env)
 {
 //Creamos los pipes para el proceso
-    int pipe[2], pipe2[2];
-    int i, here_doc;
+    int fd[2];
+    pid_t pid1;
 
-    ar_check(ar);
-    check_pipes(&pipe);
-    check_pipes(&pipe2);
-
-    here_doc = check_here_doc(av, &pipe2);
-    i = 0;
-    while (i < ar - here_doc - 3)
+    if (ar == 5)
     {
-        if(i % 2 == 0)
-            new_p_process(av[1 + here_doc + 2], &pipe2, &pipe, env);
-        else
-            new_s_process(av[1 + here_doc + 2], &pipe2, &pipe, env);
-        i++;    
+        if (pipe(fd) == -1)
+            print_error();
+        pid1 = fork();
+        if (pid1 == -1)
+            print_error();
+        if (pid1 == 0)
+            child_process(av, env, fd);
+        waitpid(pid1, NULL , 0);
+        parent_process(av,env,fd);
     }
-
-    // Cierra descriptores no necesarios
-    close_fd(pipe[1], pipe2[1]);
-
-    // Espera a los procesos hijos
-    wait_children(i);
-
-    // Escribe el resultado final
-    write_result(ar, av, &pipe, &pipe2);
-
+    else
+    {
+        ft_putstr_fd("\033[31mError: Bad arguments\n\e[0m",2);
+        ft_putstr_fd("Ex: ./pipex <file1> <cmd1> <cmd2> <file2>\n",1);
+    }
     return 0;
 }
