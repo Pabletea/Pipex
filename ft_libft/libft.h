@@ -6,7 +6,7 @@
 /*   By: pabalons <pabalons@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 10:36:36 by pabalons          #+#    #+#             */
-/*   Updated: 2025/01/02 16:40:32 by pabalons         ###   ########.fr       */
+/*   Updated: 2025/01/29 10:46:28 by pabalons         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
-
 
 int					ft_atoi(const char *str);
 void				ft_bzero(void *s, size_t n);
@@ -52,7 +51,4 @@ char				*ft_strtrim(char const *s1, char const *set);
 char				*ft_substr(char const *s, unsigned int start, size_t len);
 int					ft_tolower(int c);
 int					ft_toupper(int c);
-
-
-
 #endif
