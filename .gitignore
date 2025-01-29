@@ -1,4 +1,5 @@
 *.exe
 *.out
 *.o
+*.txt
 pipex_tester_42
