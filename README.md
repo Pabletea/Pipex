@@ -7,7 +7,6 @@
 - [Features](#-features)
 - [Installation](#-installation)
 - [Project Structure](#-project-structure)
-- [Contributing](#-contributing)
 
 ---
 
