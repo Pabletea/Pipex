@@ -31,12 +31,10 @@ This project comprises components for managing and executing pipelines, includin
 1. Clone the repository:
    ```bash
    git clone https://github.com/Pabletea/Pipex.git
- 
 
 2. Build the project using the provided Makefile:
    ```bash
    make all
-
 
 ## 🗂 Project Structure
 
