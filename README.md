@@ -35,7 +35,7 @@ This project comprises components for managing and executing pipelines, includin
 
 2. Build the project using the provided Makefile:
    ```bash
-   git clone <repository-url>``
+   make all
 
 
 ## 🗂 Project Structure
